@@ -1,4 +1,5 @@
 import { Items, items, statColors } from "../data/index"
+import SqlDao from "../dao";
 import { useState } from "react";
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
@@ -7,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import PButton from "../components/pbutton";
 
+let save = false;
 
 export default function ScreenInventory() {
 	const equipped = useSelector(state => state.user.equipped);
@@ -21,10 +23,15 @@ export default function ScreenInventory() {
 	function equipItem() {
 		console.log("EQ:",equipped);
 		dispatch(setEq({item: selectedItem!.key, idx: selectedItem!.slot as number}));
+		save = true;
 	}
-
 	function unequipItem() {
 		dispatch(setEq({item: "", idx: selectedItem!.slot as number}));
+		save = true;
+	}
+	if (save) {
+		SqlDao.saveEq(equipped);
+		save = false;
 	}
 
 	const renderItem = ({item}:{item: Items}) => (

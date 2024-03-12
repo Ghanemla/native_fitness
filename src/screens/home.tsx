@@ -14,7 +14,6 @@ export default function ScreenHome({navigation}:Props):React.JSX.Element {
 	const usrItems = user.equipped.map(key => {
 		return items[items.findIndex(i => i.key === key)]
 	});
-	console.log("usrItems:", usrItems);
 
 	function handleInventory() {
 		navigation.navigate("inventory");

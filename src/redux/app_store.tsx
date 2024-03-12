@@ -15,7 +15,10 @@ const userSlice = createSlice({
 		loaded: (state) => { state.isLoading = false },
 		setHero: (state, action:PayloadAction<string>) => { state.heroName = action.payload },
 		setTok: (state, action:PayloadAction<string>) => { state.tok = action.payload },
-		setEq: ({equipped}, action:PayloadAction<{item: string, idx: number}>) => { equipped[action.payload.idx] = action.payload.item },
+		setEq: (state, action:PayloadAction<{item: string, idx: number} | string>) => {
+			if (typeof action.payload == "string") state.equipped = action.payload.split(',');
+			else state.equipped[action.payload.idx] = action.payload.item;
+		},
 		logout: () => userInit
 	}
 });

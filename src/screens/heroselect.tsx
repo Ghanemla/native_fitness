@@ -12,22 +12,18 @@ export default function ScreenHeroSelect() {
 	const [listIdx, setScrollIdx] = useState(0);
 	const listRef = useRef(null);
 	console.log("listIdx", listIdx);
-	console.log("scrollX", scrollX);
 
 	function handleSelect() {
-		//navigation.navigate("home", {hero: heroes[listIdx]})
 		const hero_name = heroes[listIdx].name;
 		db.transactionAsync(async tx => {
-			//tx.executeSqlAsync(`INSERT INTO prefs(user_id, pref_hero) VALUES(0, ?) ON CONFLICT (pref_id) DO UPDATE SET pref_hero = excluded.pref_hero`, [hero_name]);
-			const a = await tx.executeSqlAsync(`INSERT INTO prefs(pref_hero) VALUES(?);`, [hero_name]);
-			const b = await tx.executeSqlAsync(`UPDATE users SET user_tok = '123' WHERE (user_id = 1);`, []);
-			console.log(a);
-			console.log(b);
-			
-			if (a.rowsAffected == 1 && b.rowsAffected == 1) { // use: (res.rowsAffected > 0)
-				dispatch(setHero(hero_name));
-				dispatch(setTok("123"));
-			}
+			await tx.executeSqlAsync(`UPDATE users SET user_hero = ?, user_tok = '123' WHERE user_id = 1;`, [hero_name])
+			.then(res => {
+				console.log("handleSelect", res)
+				if (res.rowsAffected == 1) {
+					dispatch(setHero(hero_name));
+					dispatch(setTok("123"));
+				}
+			});
 		}, false).catch(e => console.log("ERR:",e));
 	}
 	
@@ -53,7 +49,6 @@ export default function ScreenHeroSelect() {
 
 function RenderHero({item}:{item: Heroes}) {
 	const width = useWindowDimensions().width;
-	console.log("HERROOO:",item)
 
 	return (
 		<View style={{flex: 1, width: width}}>
@@ -68,14 +63,14 @@ function RenderHero({item}:{item: Heroes}) {
 
 function Paginate({data, scrollX}:{data: Heroes[], scrollX: Animated.Value}) {
 	const width = useWindowDimensions().width;
-	console.log("X:", scrollX);
+	console.log("scrollX:", scrollX);
 	return (
 		<View style={{flexDirection: "row", height: 60, justifyContent: "center"}}>
 			{(() => {
 				let x:React.JSX.Element[] = []
 				for (let i=0; i<data.length; i++) {
 					const inputRange = [(i-1) * width, i * width, (i+1) * width];
-					console.log(inputRange);
+					console.log("inputRange", inputRange);
 					const dotW = scrollX.interpolate({
 						inputRange,
 						outputRange: [10,20,10],

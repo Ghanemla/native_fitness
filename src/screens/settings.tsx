@@ -14,22 +14,8 @@ export default function ScreenSettings() {
 	async function dropDb() {
 		console.log("In dropDb");
 
-		/* db.transactionAsync(tx => {
-			/*const res = await tx.executeSqlAsync(`SELECT name FROM sqlite_master WHERE type = "table"`, []).catch(e => console.log(e));
-			const u_p = await tx.executeSqlAsync(`SELECT * FROM users CROSS JOIN prefs`, []).catch(e => console.log(e));
-			console.log("PRE LOGOUT\n", "users:", res, "\n", "u&p:", u_p);
-
-			await tx.executeSqlAsync(`DROP TABLE users`, []).then((x) => console.log("Dropped users:",x)).catch(e => console.log("ERR:",e));
-			//await tx.executeSqlAsync(`DROP TABLE prefs`, []).then((x) => console.log("Dropped prefs:",x)).catch(e => console.log("ERR:",e));;
-		}, false).then(() => { // was hard to find
-			db.closeAsync().then(() => {
-				console.log("Logged out");
-				dispatch(logout());
-			}).catch(() => {console.log("FUCK5"); return true} );
-		}); */
-
 		db.transaction(tx => {
-			tx.executeSql(`SELECT * FROM prefs;`, undefined,
+			tx.executeSql(`SELECT * FROM users;`, undefined,
 				(_,res) => { console.log("PRE LOGOUT:", res.rows._array) },
 				(_,e) => { console.log("ERR",e); return true }
 			);
