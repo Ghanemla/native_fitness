@@ -29,7 +29,7 @@ export default function ScreenSplash() {
 			tx.executeSql(`CREATE TABLE IF NOT EXISTS quests(
 				user_id INTEGER NOT NULL,
 				quest_id INTEGER PRIMARY KEY,
-				quest_done_count INTEGER NOT NULL DEFAULT 0,
+				quest_done_count INTEGER NOT NULL DEFAULT 1,
 				quest_active INTEGER NOT NULL DEFAULT 0,
 				FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE);`,
 			undefined, undefined, (_, e) => {
