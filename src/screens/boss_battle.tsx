@@ -11,6 +11,7 @@ const heroHp = 200
 
 export default function ScreenBossBattle({navigation}: Props): React.JSX.Element {
 	const user = useSelector(state => state.user); // Get the user from the store
+	const userStats = useSelector(state => state.user);
 	const hero = useRef(heroes.filter((h) => h.name === user.heroName)[0]).current // Get the hero from the store
 	const [boss, setBoss] = useState<Boss|null>(null); // Create a state to hold the boss
 	const [bossHealth, setBossHealth] = useState(1000); // Create a state to hold the boss's health
@@ -118,9 +119,9 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 					<Text>
 						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
-					<Text>
+					{/* <Text>
 						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {boss.attack}
-					</Text>
+					</Text> */}
 				</View>
 			</View>
 
@@ -136,17 +137,17 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<HealthBar currentHealth={heroHealth} maxHealth={heroHp} type="hero" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 					<Text>
-						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> {userStats.strength}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats.intelligence}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats.stamina}
 					</Text>
-					<Text>
-						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {boss.attack}
-					</Text>
+					{/* <Text>
+						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {userStats.stamina}
+					</Text> */}
 				</View>
 			</View>
 

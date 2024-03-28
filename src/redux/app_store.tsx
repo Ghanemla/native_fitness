@@ -7,6 +7,9 @@ const userInit = {
 		heroName: "",
 		iBag: [], // ALL items, rm potions in boss battle
 		equipped: [""], // ([ikey,ikey,ikey,ikey]
+		strength: 5, // added initial strength
+    stamina: 5, // added initial stamina
+    intelligence: 5, // added initial intelligence
 }
 const userSlice = createSlice({
 	name: "user",
@@ -19,11 +22,16 @@ const userSlice = createSlice({
 			if (typeof action.payload == "string") state.equipped = action.payload.split(',');
 			else state.equipped[action.payload.idx] = action.payload.item;
 		},
+		updateUserStats: (state, action:PayloadAction<{strength: number, stamina: number, intelligence: number}>) => {
+			state.strength += action.payload.strength;
+			state.stamina += action.payload.stamina;
+			state.intelligence += action.payload.intelligence;
+		},
 		logout: () => userInit
 	}
 });
 
-export const { loaded, setTok, setHero, setEq, logout } = userSlice.actions
+export const { loaded, setTok, setHero, setEq,updateUserStats, logout } = userSlice.actions
 
 export const store = configureStore({
 	reducer: {

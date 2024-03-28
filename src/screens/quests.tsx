@@ -2,29 +2,36 @@ import { useEffect, useState } from "react";
 import SqlDao from "../dao";
 import { quests, Quest } from "../data";
 import { Text, StyleSheet, View, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
+import { updateUserStats } from "../redux/app_store";
+import { useDispatch } from "react-redux";
 
 const strImg = require("../assets/stats/strength.png");
 const staImg = require("../assets/stats/race.png");
 const intImg = require("../assets/stats/brain.png");
 
 export default function ScreenQuests() {
+	const dispatch = useDispatch();
 	const [cat, setCat] = useState("medium");
 	const [doneQuests, setDoneQuests] = useState<number[]>([]);
 
 	function handleQuest(q:Quest) {
 		Alert.alert(`Quest "${q.task}" completed`)
 
-		doneQuests.push(q.id);
-		setDoneQuests([...doneQuests]);
+    doneQuests.push(q.id);
+    setDoneQuests([...doneQuests]);
 
-		let int = 0, sta = 0, str = 0;
-		q.stats.forEach((stat, idx) => {
-			if (stat == "int") int = q.statP[idx];
-			else if (stat == "stamina") sta = q.statP[idx];
-			else if (stat == "strength") str = q.statP[idx];
-		});
-		SqlDao.saveQuest(q.id, int, sta, str);
-	}
+    let int = 0, sta = 0, str = 0;
+    q.stats.forEach((stat, idx) => {
+      if (stat == "int") int = q.statP[idx];
+      else if (stat == "stamina") sta = q.statP[idx];
+      else if (stat == "strength") str = q.statP[idx];
+    });
+
+    // Dispatch an action to update the user's stats
+    dispatch(updateUserStats({ strength: str, stamina: sta, intelligence: int }));
+
+    SqlDao.saveQuest(q.id, int, sta, str);
+  }
 
 	useEffect(() => {
 		SqlDao.getQuestId().then(x => setDoneQuests(x));
