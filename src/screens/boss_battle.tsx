@@ -6,6 +6,7 @@ import HealthBar from '../components/healthbar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch } from 'react-redux';
 import { removeItem } from '../redux/app_store';
+import { db } from './splash';
 
 const heroHp = 200
 
@@ -16,13 +17,19 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 	const [boss, setBoss] = useState<Boss|null>(null); // Create a state to hold the boss
 	const [bossHealth, setBossHealth] = useState(1000); // Create a state to hold the boss's health
 	const [heroHealth, setHeroHealth] = useState(heroHp); // Create a state to hold the hero's health
+	const [userStats2, setUserStats2] = useState<any>();
 	const [potions_, setPotions] = useState(items.filter(item => item.name.includes('Potion'))); // Create a state to hold the potions
 	const dispatch = useDispatch(); // Get the dispatch function from the store
 
+
+
+	
+
+	
 	const handlePotionUse = (potion: Items) => {
 		if (potion.stats.includes('hp')) { // If the potion has the hp stat
 			const healingAmount = potion.statP[potion.stats.indexOf('hp')]; // Get the healing amount from the potion
-
+			
 			// Check if the hero's health is already full
 			if (heroHealth >= 200) {
 				Alert.alert("Your health is already full, you can't use a potion right now."); // Alert the user that their health is full
@@ -30,29 +37,49 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 			}
 			// Calculate the new health after using the potion
 			let newHealth = heroHealth + healingAmount; // Add the healing amount to the hero's health
-
+			
 			// If the new health is more than the maximum, cap it at the maximum
 			if (newHealth > 200) newHealth = 200;
-
+			
 			// Set the new health
 			setHeroHealth(newHealth); // Set the new health of the hero
-
+			
 			// Remove the potion from the inventory and the potions state
 			//dispatch(removeItem(potion.name)); // Dispatch the removeItem action to remove the potion from the inventory
 			setPotions(potions_.filter(p => p.name !== potion.name)); // Set the new potions state to the potions without the used potion
 		}
 	};
-
-
+	
+	
 	// Select a boss when the component mounts
 	useEffect(() => {
 		const randomIndex = Math.floor(Math.random() * bosses.length);
 		const selectedBoss = bosses[randomIndex];
 		setBoss(selectedBoss);
 		setBossHealth(selectedBoss.health);
+		
 	}, []);
+	
+  useEffect(() => {
+	db.transaction(tx => {
+		tx.executeSql(`SELECT * FROM users;`, undefined,
+		(_, res) => {
+			let usr = res.rows._array
+			console.log("stats in battle123:", usr,)
+			setUserStats2(usr[0]);
+		}, (_, e) => { console.log("ERR3:", e); return true } );
+	});
+}, []);
 
+// useEffect(() => {
+//   if (userStats2) {
+//     // userStats2 is defined, you can use it here
+//     console.log("Updated userStats2:", userStats2);
+		
+//   }
+// }, [userStats2]);
 
+	// Handle the attack button press	
 	const handleAttack = () => {
 		const heroDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the hero
 		const bossDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the boss
@@ -137,13 +164,13 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<HealthBar currentHealth={heroHealth} maxHealth={heroHp} type="hero" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 					<Text>
-						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> {userStats.strength}
+						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> { userStats2?.user_strength}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats.intelligence}
+						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats2?.user_int}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats.stamina}
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats2?.user_stamina}
 					</Text>
 					{/* <Text>
 						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {userStats.stamina}
