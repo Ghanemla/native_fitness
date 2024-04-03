@@ -138,13 +138,13 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<HealthBar currentHealth={bossHealth} maxHealth={boss.health} type="boss" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 					<Text>
-						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
 					<Text>
 						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/boot.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
 					{/* <Text>
 						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {boss.attack}
@@ -163,18 +163,18 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<Text style={styles.topHeroText}>{hero.name}</Text>
 				<HealthBar currentHealth={heroHealth} maxHealth={heroHp} type="hero" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-					<Text>
+					{/* <Text>
 						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> { userStats2?.user_strength}
+					</Text> */}
+					<Text>
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats2?.user_strength}
 					</Text>
 					<Text>
 						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats2?.user_int}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats2?.user_stamina}
+						<Image source={require("../assets/stats/boot.png")} style={styles.statIcon} /> {userStats2?.user_stamina}
 					</Text>
-					{/* <Text>
-						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {userStats.stamina}
-					</Text> */}
 				</View>
 			</View>
 
