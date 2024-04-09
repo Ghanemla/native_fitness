@@ -83,9 +83,10 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 	const handleAttack = () => {
 		const heroDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the hero
 		const bossDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the boss
-		const heroDamage = heroHp * 0.2; // 20% of hero's health
+		const usercombiendStats = userStats2.user_stamina + userStats2.user_strength + userStats2.user_int
+		const heroDamage = Math.floor(usercombiendStats * 0.10); // 10% of hero's combined stats rounded down
 		const bossDamage = boss.health * 0.05; // 5% of boss's health 
-
+		console.log("TEST:", heroDamage)
 		if (heroDiceRoll > bossDiceRoll) { // If the hero's roll is higher than the boss's roll
 			const newHealth = bossHealth - heroDamage; // Subtract the damage from the boss's health
 			if (newHealth <= 0) {
