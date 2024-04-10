@@ -12,12 +12,12 @@ const heroHp = 200
 
 export default function ScreenBossBattle({navigation}: Props): React.JSX.Element {
 	const user = useSelector(state => state.user); // Get the user from the store
-	const userStats = useSelector(state => state.user);
+	
 	const hero = useRef(heroes.filter((h) => h.name === user.heroName)[0]).current // Get the hero from the store
 	const [boss, setBoss] = useState<Boss|null>(null); // Create a state to hold the boss
 	const [bossHealth, setBossHealth] = useState(1000); // Create a state to hold the boss's health
 	const [heroHealth, setHeroHealth] = useState(heroHp); // Create a state to hold the hero's health
-	const [userStats2, setUserStats2] = useState<any>();
+	const [userStats, setUserStats2] = useState<any>(); // Create a state to hold the user stats
 	const [potions_, setPotions] = useState(items.filter(item => item.name.includes('Potion'))); // Create a state to hold the potions
 	const dispatch = useDispatch(); // Get the dispatch function from the store
 
@@ -53,40 +53,31 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 	
 	// Select a boss when the component mounts
 	useEffect(() => {
-		const randomIndex = Math.floor(Math.random() * bosses.length);
-		const selectedBoss = bosses[randomIndex];
-		setBoss(selectedBoss);
-		setBossHealth(selectedBoss.health);
+		const randomIndex = Math.floor(Math.random() * bosses.length); // Generate a random index
+		const selectedBoss = bosses[randomIndex]; // Select a boss using the random index
+		setBoss(selectedBoss); 		// Set the selected boss
+		setBossHealth(selectedBoss.health); // Set the boss's health to the boss's maximum health
 		
 	}, []);
 	
   useEffect(() => {
 	db.transaction(tx => {
-		tx.executeSql(`SELECT * FROM users;`, undefined,
+		tx.executeSql(`SELECT * FROM users;`, undefined, // Select all the users from the users table
 		(_, res) => {
-			let usr = res.rows._array
-			console.log("stats in battle123:", usr,)
-			setUserStats2(usr[0]);
-		}, (_, e) => { console.log("ERR3:", e); return true } );
+			let usr = res.rows._array // Get the users from the result
+			setUserStats2(usr[0]); // Set the user stats
+		}, (_, e) => { console.log("ERR3:", e); return true } ); // Log the error if there is one
 	});
 }, []);
 
-// useEffect(() => {
-//   if (userStats2) {
-//     // userStats2 is defined, you can use it here
-//     console.log("Updated userStats2:", userStats2);
-		
-//   }
-// }, [userStats2]);
 
-	// Handle the attack button press	
 	const handleAttack = () => {
 		const heroDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the hero
 		const bossDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the boss
-		const usercombiendStats = userStats2.user_stamina + userStats2.user_strength + userStats2.user_int
+		const usercombiendStats = userStats.user_stamina + userStats.user_strength + userStats.user_int
 		const heroDamage = Math.floor(usercombiendStats * 0.10); // 10% of hero's combined stats rounded down
 		const bossDamage = boss.health * 0.05; // 5% of boss's health 
-		console.log("TEST:", heroDamage)
+
 		if (heroDiceRoll > bossDiceRoll) { // If the hero's roll is higher than the boss's roll
 			const newHealth = bossHealth - heroDamage; // Subtract the damage from the boss's health
 			if (newHealth <= 0) {
@@ -165,16 +156,16 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<HealthBar currentHealth={heroHealth} maxHealth={heroHp} type="hero" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 					{/* <Text>
-						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> { userStats2?.user_strength}
+						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> { userStats?.user_strength}
 					</Text> */}
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats2?.user_strength}
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats?.user_strength}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats2?.user_int}
+						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats?.user_int}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/boot.png")} style={styles.statIcon} /> {userStats2?.user_stamina}
+						<Image source={require("../assets/stats/boot.png")} style={styles.statIcon} /> {userStats?.user_stamina}
 					</Text>
 				</View>
 			</View>
