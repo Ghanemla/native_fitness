@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 import { Boss, bosses, heroes, items, Items, statColors } from '../data';
 import HealthBar from '../components/healthbar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useDispatch } from 'react-redux';
-import { removeItem } from '../redux/app_store';
 import { db } from './splash';
 
 const heroHp = 200
@@ -19,7 +17,7 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 	const [heroHealth, setHeroHealth] = useState(heroHp); // Create a state to hold the hero's health
 	const [userStats, setUserStats2] = useState<any>(); // Create a state to hold the user stats
 	const [potions_, setPotions] = useState(items.filter(item => item.name.includes('Potion'))); // Create a state to hold the potions
-	const dispatch = useDispatch(); // Get the dispatch function from the store
+	
 
 
 
