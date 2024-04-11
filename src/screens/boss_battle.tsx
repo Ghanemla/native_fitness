@@ -15,7 +15,7 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 	const [boss, setBoss] = useState<Boss|null>(null); // Create a state to hold the boss
 	const [bossHealth, setBossHealth] = useState(1000); // Create a state to hold the boss's health
 	const [heroHealth, setHeroHealth] = useState(heroHp); // Create a state to hold the hero's health
-	const [userStats, setUserStats2] = useState<any>(); // Create a state to hold the user stats
+	const [userStats, setUserStats] = useState<any>(); // Create a state to hold the user stats
 	const [potions_, setPotions] = useState(items.filter(item => item.name.includes('Potion'))); // Create a state to hold the potions
 	
 
@@ -63,7 +63,7 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 		tx.executeSql(`SELECT * FROM users;`, undefined, // Select all the users from the users table
 		(_, res) => {
 			let usr = res.rows._array // Get the users from the result
-			setUserStats2(usr[0]); // Set the user stats
+			setUserStats(usr[0]); // Set the user stats
 		}, (_, e) => { console.log("ERR3:", e); return true } ); // Log the error if there is one
 	});
 }, []);
