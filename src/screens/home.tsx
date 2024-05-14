@@ -1,12 +1,16 @@
 import { useRef } from "react";
 import { useSelector } from "react-redux"
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { heroes, items, statColors } from "../data";
-import { ScrollView, StatusBar, StyleSheet, Text, Image, useColorScheme, View } from 'react-native';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ScrollView, StyleSheet, Text, Image, View } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 import PButton from "../components/pbutton";
 
 type Props = NativeStackScreenProps<RootStackParamList, "homeMain">
+
+const strImg = require("../assets/stats/strength.png");
+const staImg = require("../assets/stats/race.png");
+const intImg = require("../assets/stats/brain.png");
 
 export default function ScreenHome({navigation}:Props):React.JSX.Element {
 	const user = useSelector(state => state.user);
@@ -20,8 +24,7 @@ export default function ScreenHome({navigation}:Props):React.JSX.Element {
 	}
 
 	function redux() {
-		console.log("R:", user.heroName);
-		console.log("R:", user.equipped);
+		console.log("R:", JSON.stringify(user, null , 4));
 	}
 
 	return (
@@ -61,17 +64,21 @@ export default function ScreenHome({navigation}:Props):React.JSX.Element {
 			<View style={{flex: 1, marginVertical: 30, marginHorizontal: 30}}>
 				<Text style={styles.h1}>Today</Text>
 				<ScrollView style={{marginTop: 10}}>
-					{[1,2,3,4,5,6,7,8].map((i) =>
-					<View key={i} style={{flexDirection: "row", alignItems: "center", gap: 30, marginBottom: 8}}>
-						<View style={{width: 50, height: 50, backgroundColor: "green"}}>
-						</View>
-						<View>
-							<Text style={styles.h2}>Read a book</Text>
-							<Text>1.9 hours</Text>
-							<Text>+ STR + STA</Text>
+					{user.todayQuests.length ? user.todayQuests.map((q, qIdx, qArr) =>
+					<View key={q.id} style={{...styles.quest, marginBottom: qArr.length - 1 == qIdx ? 0 : 20}}>
+						<Text style={{fontSize: 14, marginBottom: 4}}>{q.task.charAt(0).toUpperCase() + q.task.slice(1)}</Text>
+						<View style={{flexDirection: "row", alignItems: "center", columnGap: 10}}>
+							{q.stats.map((s, sIdx) =>
+							<View key={sIdx} style={{flexDirection: "row", alignItems: "center", columnGap: 5}}>
+								<Image source={s == "strength" ? strImg : s == "stamina" ? staImg : intImg} style={{width: 10, height: 10}}/>
+								<Text style={{fontSize: 10}}>{`${q.statP[sIdx]} ${s.slice(0,3).toUpperCase()}`}</Text>
+							</View>
+							)}
 						</View>
 					</View>
-					)}
+					)
+					: <Text>Empty ...</Text>
+					}
 				</ScrollView>
 			</View>
 		</View>
@@ -93,5 +100,11 @@ const styles = StyleSheet.create({
 	h2: {
 		fontSize: 16,
 		fontWeight: "bold"
+	},
+	quest: {
+		justifyContent: "space-between",
+		padding: 10,
+		backgroundColor: "#b2f2b2",
+		borderRadius: 10
 	}
 });

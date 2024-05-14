@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loaded, setEq, setHero, setTok } from "../redux/app_store";
+import { loaded, setEq, setHero, setTok, setTodayQ } from "../redux/app_store";
 import * as SQLite from "expo-sqlite";
 import { Text, StyleSheet, View } from "react-native";
 
@@ -9,7 +9,7 @@ export let db:SQLite.SQLiteDatabase
 export default function ScreenSplash() {
 	db = SQLite.openDatabase("app.db");
 	const dispatch = useDispatch();
-	let usr: sqlDb.user[], quests: sqlDb.quest[];
+	let usr:sqlDb.user[], quests:sqlDb.quest[];
 
 	useEffect(() => {
 		db.exec([{sql: 'PRAGMA foreign_keys = ON;', args: []}], false, () => console.log("fk on"));
@@ -49,8 +49,7 @@ export default function ScreenSplash() {
 			(_, res) => {
 				quests = res.rows._array
 				console.log("USERS:", usr, "\n", "QUESTS:", quests);
-			},
-			(_, e) => {console.log("ERR4:",e); return true} );
+			}, (_, e) => {console.log("ERR4:",e); return true} );
 
 		},
 		(e) => console.log("ERR5:",e),
@@ -61,6 +60,7 @@ export default function ScreenSplash() {
 				dispatch(setHero(usr[0].user_hero));
 				dispatch(setTok(usr[0].user_tok));
 				dispatch(setEq(usr[0].user_equipped));
+				dispatch(setTodayQ( quests.map(q => q.quest_id) ));
 			}
 			dispatch(loaded());
 		});
