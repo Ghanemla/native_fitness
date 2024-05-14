@@ -1,14 +1,15 @@
 import React, { useRef } from "react";
 import { db } from "./splash";
 import { heroes } from "../data";
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
+import { useSelectorRS } from "../redux/app_store"
 import { logout } from "../redux/app_store";
 import { Text, StyleSheet, View, Image } from "react-native";
 import PButton from "../components/pbutton";
 
 export default function ScreenSettings() {
 	const dispatch = useDispatch();
-	const user = useSelector(state => state.user);
+	const user = useSelectorRS(state => state.user);
 	const hero = useRef(heroes.filter((h) => h.name === user.heroName)[0]).current;
 
 	async function dropDb() {

@@ -1,7 +1,7 @@
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSelector } from "react-redux"
+import { useSelectorRS } from "../redux/app_store"
 import { Image } from "react-native";
 import ScreenHome from "../screens/home";
 import ScreenLogin from "../screens/login";
@@ -60,7 +60,7 @@ function HomeTabs() {
 }
 
 export default function Navigation() {
-	const {isLoading, tok} = useSelector(state => state.user);
+	const {isLoading, tok} = useSelectorRS(state => state.user);
 	if (isLoading) return <ScreenSplash/>;
 
 	return (

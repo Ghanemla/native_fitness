@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useSelector } from "react-redux"
+import { useSelectorRS } from "../redux/app_store";
 import { heroes, items, statColors } from "../data";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ScrollView, StyleSheet, Text, Image, View } from 'react-native';
@@ -13,7 +13,7 @@ const staImg = require("../assets/stats/race.png");
 const intImg = require("../assets/stats/brain.png");
 
 export default function ScreenHome({navigation}:Props):React.JSX.Element {
-	const user = useSelector(state => state.user);
+	const user = useSelectorRS(state => state.user);
 	const hero = useRef(heroes.filter((h) => h.name === user.heroName)[0]).current
 	const usrItems = user.equipped.map(key => {
 		return items[items.findIndex(i => i.key === key)]

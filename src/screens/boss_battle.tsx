@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, Image, View, Button, Alert, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelectorRS } from '../redux/app_store';
 import { Boss, bosses, heroes, items, Items, statColors } from '../data';
 import HealthBar from '../components/healthbar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,7 +10,7 @@ import { removeItem } from '../redux/app_store';
 const heroHp = 200
 
 export default function ScreenBossBattle({navigation}: Props): React.JSX.Element {
-	const user = useSelector(state => state.user); // Get the user from the store
+	const user = useSelectorRS(state => state.user); // Get the user from the store
 	const hero = useRef(heroes.filter((h) => h.name === user.heroName)[0]).current // Get the hero from the store
 	const [boss, setBoss] = useState<Boss|null>(null); // Create a state to hold the boss
 	const [bossHealth, setBossHealth] = useState(1000); // Create a state to hold the boss's health

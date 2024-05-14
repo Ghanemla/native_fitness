@@ -1,4 +1,5 @@
 import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit"
+import { useSelector } from "react-redux";
 import { quests, Quest } from "../data";
 
 // A reducer's function signature is: (state, action) => newState
@@ -43,5 +44,8 @@ export const store = configureStore({
 // Can still subscribe to the store
 //store.subscribe(() => console.log(store.getState()))
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+type RootState = ReturnType<typeof store.getState>;
+export const useSelectorRS = useSelector.withTypes<RootState>();
+
+//type AppDispatch = typeof store.dispatch;
+//export const useDispatchT = useDispatch.withTypes<AppDispatch>()
