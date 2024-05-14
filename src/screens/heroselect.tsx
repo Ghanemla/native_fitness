@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useDispatch } from "react-redux"
 import { db } from "./splash";
 import { setTok, setHero } from "../redux/app_store"
-import { heroes, Heroes } from "../data";
+import { heroes } from "../data";
 import {StyleSheet, Text, Image, View, FlatList, useWindowDimensions, Animated } from 'react-native';
 import PButton from "../components/pbutton";
 

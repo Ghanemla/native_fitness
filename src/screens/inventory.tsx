@@ -22,11 +22,11 @@ export default function ScreenInventory() {
 
 	function equipItem() {
 		console.log("EQ:",equipped);
-		dispatch(setEq({item: selectedItem!.key, idx: selectedItem!.slot as number}));
+		dispatch(setEq({item: selectedItem!.key, idx: selectedItem!.slot as 0|1|2|3}));
 		save = true;
 	}
 	function unequipItem() {
-		dispatch(setEq({item: "", idx: selectedItem!.slot as number}));
+		dispatch(setEq({item: "", idx: selectedItem!.slot as 0|1|2|3}));
 		save = true;
 	}
 	if (save) {

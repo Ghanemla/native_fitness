@@ -85,7 +85,7 @@ export interface Items {
 	img: any;
 	stats: Stat[];
 	statP: number[];
-	slot: number|false;
+	slot: 0|1|2|3|false;
 }
 export const items:Items[] = [
 	{
