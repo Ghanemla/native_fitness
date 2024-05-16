@@ -4,6 +4,8 @@ import { setTodayQ } from "../redux/app_store";
 import SqlDao from "../dao";
 import { quests, Quest } from "../data";
 import { Text, StyleSheet, View, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
+import { updateUserStats } from "../redux/app_store";
+import { useDispatch } from "react-redux";
 
 const strImg = require("../assets/stats/strength.png");
 const staImg = require("../assets/stats/race.png");
@@ -17,8 +19,8 @@ export default function ScreenQuests() {
 	function handleQuest(q:Quest) {
 		Alert.alert(`Quest "${q.task}" completed`)
 
-		doneQuests.push(q.id);
-		setDoneQuests([...doneQuests]);
+    doneQuests.push(q.id);
+    setDoneQuests([...doneQuests]);
 
 		let int = 0, sta = 0, str = 0;
 		q.stats.forEach((stat, idx) => {
@@ -27,6 +29,7 @@ export default function ScreenQuests() {
 			else if (stat == "strength") str = q.statP[idx];
 		});
 		SqlDao.saveQuest(q.id, int, sta, str);
+		dispatch(updateUserStats({ strength: str, stamina: sta, intelligence: int }));
 		dispatch(setTodayQ(q));
 	}
 

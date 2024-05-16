@@ -4,24 +4,31 @@ import { useSelectorRS } from '../redux/app_store';
 import { Boss, bosses, heroes, items, Items, statColors } from '../data';
 import HealthBar from '../components/healthbar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useDispatch } from 'react-redux';
-import { removeItem } from '../redux/app_store';
+import { db } from './splash';
 
 const heroHp = 200
 
 export default function ScreenBossBattle({navigation}: Props): React.JSX.Element {
 	const user = useSelectorRS(state => state.user); // Get the user from the store
+	// const user = useSelector(state => state.user); // Get the user from the store
+	
 	const hero = useRef(heroes.filter((h) => h.name === user.heroName)[0]).current // Get the hero from the store
 	const [boss, setBoss] = useState<Boss|null>(null); // Create a state to hold the boss
 	const [bossHealth, setBossHealth] = useState(1000); // Create a state to hold the boss's health
 	const [heroHealth, setHeroHealth] = useState(heroHp); // Create a state to hold the hero's health
+	const [userStats, setUserStats] = useState<any>(); // Create a state to hold the user stats
 	const [potions_, setPotions] = useState(items.filter(item => item.name.includes('Potion'))); // Create a state to hold the potions
-	const dispatch = useDispatch(); // Get the dispatch function from the store
+	
 
+
+
+	
+
+	
 	const handlePotionUse = (potion: Items) => {
 		if (potion.stats.includes('hp')) { // If the potion has the hp stat
 			const healingAmount = potion.statP[potion.stats.indexOf('hp')]; // Get the healing amount from the potion
-
+			
 			// Check if the hero's health is already full
 			if (heroHealth >= 200) {
 				Alert.alert("Your health is already full, you can't use a potion right now."); // Alert the user that their health is full
@@ -29,33 +36,45 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 			}
 			// Calculate the new health after using the potion
 			let newHealth = heroHealth + healingAmount; // Add the healing amount to the hero's health
-
+			
 			// If the new health is more than the maximum, cap it at the maximum
 			if (newHealth > 200) newHealth = 200;
-
+			
 			// Set the new health
 			setHeroHealth(newHealth); // Set the new health of the hero
-
+			
 			// Remove the potion from the inventory and the potions state
 			//dispatch(removeItem(potion.name)); // Dispatch the removeItem action to remove the potion from the inventory
 			setPotions(potions_.filter(p => p.name !== potion.name)); // Set the new potions state to the potions without the used potion
 		}
 	};
-
-
+	
+	
 	// Select a boss when the component mounts
 	useEffect(() => {
-		const randomIndex = Math.floor(Math.random() * bosses.length);
-		const selectedBoss = bosses[randomIndex];
-		setBoss(selectedBoss);
-		setBossHealth(selectedBoss.health);
+		const randomIndex = Math.floor(Math.random() * bosses.length); // Generate a random index
+		const selectedBoss = bosses[randomIndex]; // Select a boss using the random index
+		setBoss(selectedBoss); 		// Set the selected boss
+		setBossHealth(selectedBoss.health); // Set the boss's health to the boss's maximum health
+		
 	}, []);
+	
+  useEffect(() => {
+	db.transaction(tx => {
+		tx.executeSql(`SELECT * FROM users;`, undefined, // Select all the users from the users table
+		(_, res) => {
+			let usr = res.rows._array // Get the users from the result
+			setUserStats(usr[0]); // Set the user stats
+		}, (_, e) => { console.log("ERR3:", e); return true } ); // Log the error if there is one
+	});
+}, []);
 
 
 	const handleAttack = () => {
 		const heroDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the hero
 		const bossDiceRoll = Math.floor(Math.random() * 20) + 1; // Roll a 20-sided dice for the boss
-		const heroDamage = heroHp * 0.2; // 20% of hero's health
+		const usercombiendStats = userStats.user_stamina + userStats.user_strength + userStats.user_int
+		const heroDamage = Math.floor(usercombiendStats * 0.10); // 10% of hero's combined stats rounded down
 		const bossDamage = boss.health * 0.05; // 5% of boss's health 
 
 		if (heroDiceRoll > bossDiceRoll) { // If the hero's roll is higher than the boss's roll
@@ -110,17 +129,17 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<HealthBar currentHealth={bossHealth} maxHealth={boss.health} type="boss" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
 					<Text>
-						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
 					<Text>
 						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/boot.png")} style={styles.statIcon} /> {boss.attack}
 					</Text>
-					<Text>
+					{/* <Text>
 						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {boss.attack}
-					</Text>
+					</Text> */}
 				</View>
 			</View>
 
@@ -135,17 +154,17 @@ export default function ScreenBossBattle({navigation}: Props): React.JSX.Element
 				<Text style={styles.topHeroText}>{hero.name}</Text>
 				<HealthBar currentHealth={heroHealth} maxHealth={heroHp} type="hero" />
 				<View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+					{/* <Text>
+						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> { userStats?.user_strength}
+					</Text> */}
 					<Text>
-						<Image source={require("../assets/stats/sword.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {userStats?.user_strength}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/brain.png")} style={styles.statIcon} /> {userStats?.user_int}
 					</Text>
 					<Text>
-						<Image source={require("../assets/stats/strength.png")} style={styles.statIcon} /> {boss.attack}
-					</Text>
-					<Text>
-						<Image source={require("../assets/stats/shield.png")} style={styles.statIcon} /> {boss.attack}
+						<Image source={require("../assets/stats/boot.png")} style={styles.statIcon} /> {userStats?.user_stamina}
 					</Text>
 				</View>
 			</View>
