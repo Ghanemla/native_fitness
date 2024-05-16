@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setTodayQ } from "../redux/app_store";
 import SqlDao from "../dao";
 import { quests, Quest } from "../data";
 import { Text, StyleSheet, View, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
@@ -8,6 +10,7 @@ const staImg = require("../assets/stats/race.png");
 const intImg = require("../assets/stats/brain.png");
 
 export default function ScreenQuests() {
+	const dispatch = useDispatch();
 	const [cat, setCat] = useState("medium");
 	const [doneQuests, setDoneQuests] = useState<number[]>([]);
 
@@ -24,6 +27,7 @@ export default function ScreenQuests() {
 			else if (stat == "strength") str = q.statP[idx];
 		});
 		SqlDao.saveQuest(q.id, int, sta, str);
+		dispatch(setTodayQ(q));
 	}
 
 	useEffect(() => {
@@ -49,16 +53,16 @@ export default function ScreenQuests() {
 			</View>
 			<View style={{flex: 1, width: "100%"}}>
 			<ScrollView style={{flex: 1, marginVertical: 20}}>
-				{quests.filter(i => i.cat == cat && !doneQuests.includes(i.id)).map((q, qId, qArr) =>
-					<TouchableOpacity key={qId} style={{...styles.quest, marginBottom: qArr.length - 1 == qId ? 0 : 20}}
+				{quests.filter(i => i.cat == cat && !doneQuests.includes(i.id)).map((q, qIdx, qArr) =>
+					<TouchableOpacity key={qIdx} style={{...styles.quest, marginBottom: qArr.length - 1 == qIdx ? 0 : 20}}
 					onPress={() => handleQuest(q)}
 					>
 						<Text style={{fontSize: 14, marginBottom: 4}}>{q.task.charAt(0).toUpperCase() + q.task.slice(1)}</Text>
 						<View style={{flexDirection: "row", alignItems: "center", columnGap: 10}}>
-							{q.stats.map((s, sId) =>
-							<View key={sId} style={{flexDirection: "row", alignItems: "center", columnGap: 5}}>
+							{q.stats.map((s, sIdx) =>
+							<View key={sIdx} style={{flexDirection: "row", alignItems: "center", columnGap: 5}}>
 								<Image source={s == "strength" ? strImg : s == "stamina" ? staImg : intImg} style={{width: 10, height: 10}}/>
-								<Text style={{fontSize: 10}}>{`${q.statP[sId]} ${s.slice(0,3).toUpperCase()}`}</Text>
+								<Text style={{fontSize: 10}}>{`${q.statP[sIdx]} ${s.slice(0,3).toUpperCase()}`}</Text>
 							</View>
 							)}
 						</View>

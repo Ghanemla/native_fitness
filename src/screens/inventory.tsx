@@ -1,7 +1,7 @@
 import { Items, items, statColors } from "../data/index"
 import SqlDao from "../dao";
 import { useState } from "react";
-import { useSelector } from "react-redux"
+import { useSelectorRS } from "../redux/app_store"
 import { useDispatch } from "react-redux"
 import { setEq } from "../redux/app_store"
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,7 +11,7 @@ import PButton from "../components/pbutton";
 let save = false;
 
 export default function ScreenInventory() {
-	const equipped = useSelector(state => state.user.equipped);
+	const equipped = useSelectorRS(state => state.user.equipped);
 	const dispatch = useDispatch();
 	const [selectedItem, setSelectedItem] = useState<Items|null>(null);
 
@@ -22,11 +22,11 @@ export default function ScreenInventory() {
 
 	function equipItem() {
 		console.log("EQ:",equipped);
-		dispatch(setEq({item: selectedItem!.key, idx: selectedItem!.slot as number}));
+		dispatch(setEq({item: selectedItem!.key, idx: selectedItem!.slot as 0|1|2|3}));
 		save = true;
 	}
 	function unequipItem() {
-		dispatch(setEq({item: "", idx: selectedItem!.slot as number}));
+		dispatch(setEq({item: "", idx: selectedItem!.slot as 0|1|2|3}));
 		save = true;
 	}
 	if (save) {
