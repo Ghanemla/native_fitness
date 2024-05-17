@@ -5,7 +5,7 @@ import SqlDao from "../dao";
 import { quests, Quest } from "../data";
 import { Text, StyleSheet, View, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
 import { updateUserStats } from "../redux/app_store";
-import { useDispatch } from "react-redux";
+
 
 const strImg = require("../assets/stats/strength.png");
 const staImg = require("../assets/stats/race.png");
